@@ -13,7 +13,7 @@ export default function Boton({ children, onClick, loading = false, estilos }) {
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary 
             ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}
             bg-fondo hover:bg-primary/90 
-            text-text hover:text-white
+            text-text 
             border border-transparent 
             shadow-sm 
             disabled:opacity-75

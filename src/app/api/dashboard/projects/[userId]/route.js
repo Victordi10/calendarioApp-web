@@ -35,9 +35,9 @@ export async function POST(req) {
 }
 
 
-export async function GET(req) {
+export async function GET(req, { params }) {
     try {
-        const userId = req.nextUrl.searchParams.get("userId"); // ✅ Obtiene el parámetro correctamente
+        const { userId } = params; // ✅ Obtiene el parámetro correctamente
 
         if (!userId) {
             return errorResponse("El ID del usuario es obligatorio", 400);

@@ -4,13 +4,12 @@ import Project from './project';
 import Link from 'next/link';
 import FormProject from './form';
 import { Plus } from 'lucide-react';
-import { useSearchParams } from "next/navigation";
 import Loader from '@/components/ui/loader';
 
+import { useParams } from "next/navigation";
 export default function Dashboard() {
     const [showForm, setShowForm] = useState(false);
-    const searchParams = useSearchParams();
-    const userId = searchParams.get("user"); // Obtiene el ID del usuario
+    const { userId } = useParams(); // ✅ Obtiene el `id` de la URL
     const [error, setError] = useState("");
     const [loading, setLoadings] = useState(false);
     const [projects, setProjects] = useState([]);
@@ -21,7 +20,7 @@ export default function Dashboard() {
         const fetchProjects = async () => {
             setLoadings(true);
             try {
-                const res = await fetch(`/api/dashboard/projects?userId=${userId}`);
+                const res = await fetch(`/api/dashboard/projects/${userId}`);
                 const data = await res.json();
                 if (!res.ok) {
                     throw new Error(data.message || "Error al obtener los proyectos");
@@ -83,7 +82,7 @@ export default function Dashboard() {
                         {/* Lista de proyectos */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {projects.map(project => {
-                                return <Project key={project.id} project={project} />
+                                return <Project key={project.id} project={project} userId={userId}/>
                             })}
                         </div>
                     </>

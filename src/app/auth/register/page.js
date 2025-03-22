@@ -51,7 +51,7 @@ export default function Register() {
             }
             console.log("Usuario creado:", data.data);
 
-            router.push(`/dashboard/projects?user=${data.data.id}`); //// Redirige al dashboard después del login
+            router.push(`/dashboard/projects/${data.data.id}`); //// Redirige al dashboard después del login
         } catch (err) {
             setError(err.message || "Ocurrió un error durante el registro")
             setLoading(false)
