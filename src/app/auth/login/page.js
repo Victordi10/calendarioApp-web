@@ -40,7 +40,7 @@ export default function Login() {
                 return;
             }
 
-            router.push("/dashboard"); // Redirige al dashboard después del login
+            router.push(`/dashboard/projects?user=${data.data.user.id}`); // Redirige al dashboard después del login
         } catch (err) {
             setError(err.message || "Ocurrió un error durante el inicio de sesión");
             setLoading(false);

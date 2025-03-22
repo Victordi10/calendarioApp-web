@@ -34,6 +34,7 @@ export async function POST(req) {
         });
 
     } catch (error) {
+        console.error("Error en /api/auth/login", error);
         return await errorResponse("Error en el servidor", 500);
 
     }

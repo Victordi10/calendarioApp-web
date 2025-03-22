@@ -14,40 +14,51 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
+  id        String        @id @default(uuid())
   name      String
-  email     String    @unique
+  email     String        @unique
   password  String
-  projects  Project[] // Relación: Un usuario puede tener varios proyectos
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  projects  ProjectUser[] // Relación: Un usuario puede estar en varios proyectos
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  Project   Project[]
 }
 
 model Project {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   name      String
-  userId    String   // Clave foránea a User
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  events    Event[]  // Relación: Un proyecto puede tener varios eventos
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  ownerId   String // Clave foránea a User (Administrador)
+  owner     User          @relation(fields: [ownerId], references: [id], onDelete: Cascade) // El creador del proyecto
+  members   ProjectUser[] // Relación con los colaboradores
+  events    Event[] // Relación con eventos
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ProjectUser {
+  id        String  @id @default(uuid())
+  userId    String // Clave foránea a User
+  projectId String // Clave foránea a Project
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId]) // Evita duplicados (un usuario no puede estar dos veces en el mismo proyecto)
 }
 
 model Event {
   id          String   @id @default(uuid())
-  cycle       String   // clasificacion segun el ciclo de vida del usuario
-  title       String   // NOMBRE DEL EVENTO
-  socialMedia String   // RED SOCIAL (Ej: "Instagram", "Twitter")
-  category    String   // CATEGORÍA (Ej: "Marketing", "Educación")
-  objective   String   // OBJETIVO (Ej: "Aumentar engagement")
-  format      String   // FORMATO (Ej: "Video", "Imagen", "Texto")
-  text        String   // TEXTO PRINCIPAL DE LA PUBLICACIÓN
-  hashtags    String?  // HASHSTAGS Y MENCIONES (Opcional)
+  cycle       String // clasificacion segun el ciclo de vida del usuario
+  title       String // NOMBRE DEL EVENTO
+  socialMedia String // RED SOCIAL (Ej: "Instagram", "Twitter")
+  category    String // CATEGORÍA (Ej: "Marketing", "Educación")
+  objective   String // OBJETIVO (Ej: "Aumentar engagement")
+  format      String // FORMATO (Ej: "Video", "Imagen", "Texto")
+  text        String // TEXTO PRINCIPAL DE LA PUBLICACIÓN
+  hashtags    String? // HASHSTAGS Y MENCIONES (Opcional)
   time        DateTime // HORA DEL EVENTO
-  status      String   // ESTADO (Ej: "Pendiente", "Publicado")
-  projectId   String   // Clave foránea a Project
+  status      String // ESTADO (Ej: "Pendiente", "Publicado")
+  projectId   String // Clave foránea a Project
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
-
