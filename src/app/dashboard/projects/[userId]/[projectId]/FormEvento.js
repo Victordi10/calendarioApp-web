@@ -1,7 +1,55 @@
+'use client'
+import React, { useState } from 'react';
+import Loader from '@/components/ui/loader';
+
+export default function FormEvento({ eventData, setError, setEventData, handleInputChange, setShowEventForm }) {
+    const [loading, setLoading] = useState(false);
+    // Manejar envío del formulario
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/dashboard/projects/${userId}/${projectId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(eventData),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Error al publicar el evento");
+            }
+
+            alert("Evento publicado exitosamente!");
+        } catch (error) {
+            console.error("Error al publicar el evento", error);
+            setError(error.message || "Ocurrió un Error al publicar el evento");
+        } finally {
+            setLoading(false);
+        }
 
 
 
-export default function FormEvento({ eventData, handleInputChange, handleSubmit, setShowEventForm }) {
+        console.log('Datos del evento:', eventData);
+        setShowEventForm(false);
+        // Resetear formulario
+        setEventData({
+            clasificacion: '',
+            nombre: '',
+            redSocial: '',
+            categoria: '',
+            objetivo: '',
+            formato: '',
+            copywriten: '',
+            hashtags: '',
+            fecha: '',
+            hora: '',
+            estado: 'Pendiente',
+            projectId: projectId
+        });
+    };
     return (
         <form onSubmit={handleSubmit} className="p-4 md:p-6 bg-white rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -215,20 +263,6 @@ export default function FormEvento({ eventData, handleInputChange, handleSubmit,
                     />
                 </div>
 
-                {/* Menciones */}
-                <div className="col-span-1">
-                    <label className="block text-[#6C757D] text-sm font-medium mb-1">
-                        Menciones
-                    </label>
-                    <input
-                        type="text"
-                        name="menciones"
-                        value={eventData.menciones}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2.5 bg-[#F8F9FA] text-[#212529] border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#007AFF] focus:border-transparent transition-all"
-                        placeholder="@usuario1 @usuario2"
-                    />
-                </div>
             </div>
 
             {/* Botones de acción */}
@@ -241,10 +275,12 @@ export default function FormEvento({ eventData, handleInputChange, handleSubmit,
                     Cancelar
                 </button>
                 <button
+                    onClick={handleSubmit}
+                    disabled={loading}
                     type="submit"
                     className="px-5 py-2.5 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors font-medium shadow-sm"
                 >
-                    Guardar Contenido
+                    {loading ? <Loader size={40} color='#fff'/> : "Guardar Contenido"}
                 </button>
             </div>
         </form>

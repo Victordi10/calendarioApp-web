@@ -1,20 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Plus, Edit, Trash } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Calendar, Loader2, LogOut, Filter, Search, Settings } from 'lucide-react';
 import Loader from "@/components/ui/loader";
+import EventDisplay from "./EventDisplay";
 import Aside from "./aside";
 import Header from "./header";
 import { FiHome, FiUsers, FiPlus, FiFileText, FiMenu, FiX, FiLogOut, FiCalendar } from 'react-icons/fi';
 import FormEvento from "./FormEvento";
+import ContentCard from "./content-card";
 export default function ProjectDashboard() {
     const { userId, projectId } = useParams(); // ✅ Obtiene los parámetros de la URL
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [newCollaborator, setNewCollaborator] = useState("");
-    const [editingName, setEditingName] = useState("");
-    const [showEdit, setShowEdit] = useState(false);
+    const [contenido, setContenido] = useState(null);
 
     // Estado para controlar la visualización del menú móvil
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -32,10 +33,10 @@ export default function ProjectDashboard() {
         formato: '',
         copywriten: '',
         hashtags: '',
-        menciones: '',
         fecha: '',
         hora: '',
-        estado: 'Pendiente'
+        estado: 'Pendiente',
+        projectId
     });
 
     // Manejar cambios en los inputs del formulario
@@ -47,27 +48,30 @@ export default function ProjectDashboard() {
         });
     };
 
-    // Manejar envío del formulario
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Aquí iría la lógica para guardar el evento
-        console.log('Datos del evento:', eventData);
-        setShowEventForm(false);
-        // Resetear formulario
-        setEventData({
-            clasificacion: '',
-            nombre: '',
-            redSocial: '',
-            categoria: '',
-            objetivo: '',
-            formato: '',
-            copywriten: '',
-            hashtags: '',
-            menciones: '',
-            fecha: '',
-            hora: '',
-            estado: 'Pendiente'
-        });
+    const getContenido = async (fecha) => {
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/dashboard/projects/${userId}/${projectId}?fecha=${fecha}`);
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Error al obtener los eventos");
+            }
+
+            if (data.data.length === 0) {
+                setError("No hay eventos disponibles");
+            }
+
+            console.log(data.data[0])
+
+            setContenido(data.data[0]);
+        } catch (error) {
+            console.error("Error al obtener el evento", error);
+            setError(error.message || "Ocurrió un error al obtener el evento");
+        } finally {
+            setLoading(false);
+        }
     };
     // Lista de opciones del menú
     const menuItems = [
@@ -91,6 +95,10 @@ export default function ProjectDashboard() {
         };
     }, []);
 
+    useEffect(() => {
+        getContenido(new Date().toISOString().split('T')[0]);
+    }, []);
+
     return (
         <div className="flex h-screen bg-[#F8F9FA]">
             {/* Sidebar para pantallas grandes (md y superiores) */}
@@ -102,11 +110,41 @@ export default function ProjectDashboard() {
                 <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} />
                 {/* Contenido principal */}
                 <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
+                    <AnimatePresence>
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 relative"
+                            >
+                                <button
+                                    onClick={dismissError}
+                                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                                >
+                                    ×
+                                </button>
+                                <p className="text-sm">{error}</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+
                     {/* Aquí va el contenido de tu dashboard */}
-                    <div className="bg-white p-4 rounded shadow border border-[#E5E7EB]">
-                        <h2 className="text-lg font-medium text-[#212529] mb-4">Resumen del Proyecto</h2>
-                        <p className="text-[#6C757D]">Aquí puedes mostrar la información principal de tu proyecto.</p>
-                    </div>
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center py-16 space-y-4">
+                            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                            <p className="text-gray-500">Cargando proyectos...</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="bg-white p-4 mb-4 rounded shadow border border-[#E5E7EB]">
+                                <h2 className="text-lg font-medium text-[#212529] mb-4">Resumen del Proyecto</h2>
+                                <p className="text-[#6C757D]">Aquí puedes mostrar la información principal de tu proyecto.</p>
+                            </div>
+                            <ContentCard content={contenido}/>
+                        </>
+                    )}
 
                     {/* Botón flotante para agregar evento */}
                     <button
@@ -133,7 +171,7 @@ export default function ProjectDashboard() {
                                     </button>
                                 </div>
 
-                                <FormEvento handleInputChange={handleInputChange} handleSubmit={handleSubmit} eventData={eventData} setShowEventForm={setShowEventForm}/>
+                                <FormEvento handleInputChange={handleInputChange} setEventData={setEventData} setError={setError} eventData={eventData} setShowEventForm={setShowEventForm} />
                             </div>
                         </div>
                     )}

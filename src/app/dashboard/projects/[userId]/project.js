@@ -28,9 +28,9 @@ const Project = ({ project, userId }) => {
 
     // Marketing icons rotation
     const icons = [
-        <TrendingUp  className="w-5 h-5 text-white" />,
-        <BarChart4 className="w-5 h-5 text-white" />,
-        <Calendar className="w-5 h-5 text-white" />
+        <TrendingUp key="trending-up" className="w-5 h-5 text-white" />,
+        <BarChart4 key="bar-chart" className="w-5 h-5 text-white" />,
+        <Calendar key="calendar" className="w-5 h-5 text-white" />
     ];
     const iconIndex = Math.abs(id.charCodeAt(0)) % icons.length;
 

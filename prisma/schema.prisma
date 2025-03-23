@@ -25,14 +25,19 @@ model User {
 }
 
 model Project {
-  id        String        @id @default(uuid())
-  name      String
-  ownerId   String // Clave foránea a User (Administrador)
-  owner     User          @relation(fields: [ownerId], references: [id], onDelete: Cascade) // El creador del proyecto
-  members   ProjectUser[] // Relación con los colaboradores
-  events    Event[] // Relación con eventos
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id              String        @id @default(uuid())
+  name            String
+  description     String? // Descripción del proyecto (opcional)
+  idealClient     String? // Definición del cliente ideal
+  shortTermGoals  String? // Objetivos a corto plazo
+  mediumTermGoals String? // Objetivos a mediano plazo
+  longTermGoals   String? // Objetivos a largo plazo
+  ownerId         String
+  owner           User          @relation(fields: [ownerId], references: [id])
+  members         ProjectUser[]
+  events          Event[] // Relación con Event
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model ProjectUser {
@@ -47,17 +52,17 @@ model ProjectUser {
 
 model Event {
   id          String   @id @default(uuid())
-  cycle       String // clasificacion segun el ciclo de vida del usuario
-  title       String // NOMBRE DEL EVENTO
-  socialMedia String // RED SOCIAL (Ej: "Instagram", "Twitter")
-  category    String // CATEGORÍA (Ej: "Marketing", "Educación")
-  objective   String // OBJETIVO (Ej: "Aumentar engagement")
-  format      String // FORMATO (Ej: "Video", "Imagen", "Texto")
-  text        String // TEXTO PRINCIPAL DE LA PUBLICACIÓN
-  hashtags    String? // HASHSTAGS Y MENCIONES (Opcional)
-  time        DateTime // HORA DEL EVENTO
-  status      String // ESTADO (Ej: "Pendiente", "Publicado")
-  projectId   String // Clave foránea a Project
+  cycle       String
+  title       String
+  socialMedia String
+  category    String
+  objective   String
+  format      String
+  text        String
+  hashtags    String?
+  time        DateTime // HORA Y FECHA DEL EVENTO
+  status      String
+  projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
