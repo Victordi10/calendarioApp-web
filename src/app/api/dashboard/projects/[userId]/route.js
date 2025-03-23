@@ -23,7 +23,7 @@ export async function POST(req) {
                 }
             },
             include: {
-                members: true // 🔹 Cargar los miembros en la respuesta
+                members: true 
             }
         });
         return successResponse("Proyecto creado exitosamente", newProject);
