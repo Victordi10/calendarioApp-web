@@ -8,7 +8,7 @@ export function Badge({ variant = "default", className, children, ...props }) {
 
   return (
     <div
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-[#007AFF] focus:ring-offset-2 ${variantClasses[variant] || ""} ${className || ""}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-[#007AFF] focus:ring-offset-2 ${variantClasses[variant] || ""} ${className || ""}`}
       {...props}
     >
       {children}

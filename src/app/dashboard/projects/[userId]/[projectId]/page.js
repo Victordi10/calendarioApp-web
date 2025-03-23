@@ -12,6 +12,7 @@ import FormEvento from "./FormEvento";
 import ContentCard from "./content-card";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
+import Error from "@/components/ui/error";
 
 
 export default function ProjectDashboard() {
@@ -19,6 +20,7 @@ export default function ProjectDashboard() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [edit, setEdit] = useState(null);
     const [contenido, setContenido] = useState(null);
     const [project, setProject] = useState(null);
     const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]); // Fecha actual en formato YYYY-MM-DD
@@ -30,21 +32,25 @@ export default function ProjectDashboard() {
     // Estado para controlar la visualización del formulario de eventos
     const [showEventForm, setShowEventForm] = useState(false);
 
+    const initialEventData = {
+        clasificacion: "",
+        nombre: "",
+        redSocial: "",
+        categoria: "",
+        objetivo: "",
+        formato: "",
+        copywriten: "",
+        hashtags: "",
+        fecha: "",
+        hora: "",
+        estado: "Pendiente",
+        projectId: projectId,
+    }
+    
     // Estado para los datos del formulario
-    const [eventData, setEventData] = useState({
-        clasificacion: '',
-        nombre: '',
-        redSocial: '',
-        categoria: '',
-        objetivo: '',
-        formato: '',
-        copywriten: '',
-        hashtags: '',
-        fecha: '',
-        hora: '',
-        estado: 'Pendiente',
-        projectId
-    });
+    const [eventData, setEventData] = useState(initialEventData)
+
+
 
     // Manejar cambios en los inputs del formulario
     const handleInputChange = (e) => {
@@ -73,7 +79,7 @@ export default function ProjectDashboard() {
                     "Authorization": `Bearer ${token}`, // 📌 Enviar token correctamente
                 },
             });
-            
+
             const data = await res.json();
 
             if (!res.ok) {
@@ -125,6 +131,11 @@ export default function ProjectDashboard() {
         }
     }, [fecha, getContenido]);
 
+    const hanledCreateEvent = ()=>{
+        setShowEventForm(true)
+        setEdit(null)
+    }
+
 
     return (
         <div className="flex h-screen bg-[#F8F9FA]">
@@ -137,25 +148,8 @@ export default function ProjectDashboard() {
                 <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project} />
                 {/* Contenido principal */}
                 <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
-                    <AnimatePresence>
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 relative"
-                            >
-                                <button
-                                    onClick={() => setError(null)}
-                                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                                >
-                                    ×
-                                </button>
-                                <p className="text-sm">{error}</p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
 
+                    <Error error={error} />
 
                     {/* Aquí va el contenido de tu dashboard */}
                     {loading ? (
@@ -165,17 +159,19 @@ export default function ProjectDashboard() {
                         </div>
                     ) : (
                         <>
-                            <div className="bg-white p-4 mb-4 rounded shadow border border-[#E5E7EB]">
+                            {/* <div className="bg-white p-4 mb-4 rounded shadow border border-[#E5E7EB]">
                                 <h2 className="text-lg font-medium text-[#212529] mb-4">Resumen del Proyecto</h2>
                                 <p className="text-[#6C757D]">Aquí puedes mostrar la información principal de tu proyecto.</p>
-                            </div>
-                            <ContentCard content={contenido} />
+                            </div> */}
+                            <ContentCard content={contenido} setEdit={setEdit} setShowEventForm={setShowEventForm}/>
                         </>
                     )}
 
                     {/* Botón flotante para agregar evento */}
                     <button
-                        onClick={() => setShowEventForm(true)}
+                        onClick={() => {
+                            hanledCreateEvent()
+                        }}
                         className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[#007AFF] text-white flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
                     >
                         <FiPlus size={24} />
@@ -183,8 +179,8 @@ export default function ProjectDashboard() {
 
                     {/* Modal de formulario para agregar evento */}
                     {showEventForm && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+                        <div className="fixed inset-0  bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto py-7">
                                 <div className="p-4 border-b border-[#E5E7EB] flex justify-between items-center">
 
                                     <h2 className="text-xl font-semibold text-[#212529] border-b border-[#E5E7EB] pb-2">
@@ -198,7 +194,9 @@ export default function ProjectDashboard() {
                                     </button>
                                 </div>
 
-                                <FormEvento projectId={projectId} setContenido={setContenido} userId={userId} handleInputChange={handleInputChange} setEventData={setEventData} setError={setError} eventData={eventData} setShowEventForm={setShowEventForm} />
+                                <Error error={error} />
+
+                                <FormEvento projectId={projectId} setContenido={setContenido} userId={userId} handleInputChange={handleInputChange} setEventData={setEventData} setError={setError} eventData={eventData} setShowEventForm={setShowEventForm} editContent={edit}  />
                             </div>
                         </div>
                     )}

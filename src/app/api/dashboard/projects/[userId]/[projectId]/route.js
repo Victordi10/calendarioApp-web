@@ -140,3 +140,60 @@ async function getContenido(req, context) {
     }
 }
 export const GET = authMiddleware(getContenido);
+
+
+
+export async function PUT(req, context) {
+    try {
+        const params = await context.params;
+        const { userId } = params;
+        const body = await req.json() // ✅ Obtener los datos del body
+        const { eventId, projectId, fecha, hora, ...eventData } = body
+
+        // 🔹 Validar que se envían los datos necesarios
+        if (!eventId || !projectId || !userId) {
+            return errorResponse("El ID del evento, proyecto y usuario son obligatorios", 400)
+        }
+
+        // ✅ Mapeo de nombres incorrectos a los correctos
+        const updateData = {
+            cycle: eventData.clasificacion,
+            title: eventData.nombre,
+            socialMedia: eventData.redSocial,
+            category: eventData.categoria,
+            objective: eventData.objetivo,
+            format: eventData.formato,
+            text: eventData.copywriten,
+            status: eventData.estado,
+            time: new Date(`${fecha}T${hora}:00.000Z`), // 🔹 Convertimos fecha + hora a DateTime
+        };
+
+        // 🔹 Verificar que el usuario tenga permisos para editar
+        const project = await prisma.project.findUnique({
+            where: { id: projectId },
+            include: { owner: true, members: true }
+        })
+
+        if (!project) {
+            return errorResponse("Proyecto no encontrado", 404)
+        }
+
+        const isOwner = project.owner.id === userId
+        const isMember = project.members.some(member => member.userId === userId)
+
+        if (!isOwner && !isMember) {
+            return errorResponse("No tienes permisos para editar este evento", 403)
+        }
+
+        // 🔹 Actualizar el evento
+        const updatedEvent = await prisma.event.update({
+            where: { id: eventId },
+            data: updateData
+        })
+
+        return successResponse("Evento actualizado exitosamente", updatedEvent)
+    } catch (error) {
+        console.error("Error en /api/dashboard/projects/event", error)
+        return errorResponse("Error en el servidor", 500)
+    }
+}

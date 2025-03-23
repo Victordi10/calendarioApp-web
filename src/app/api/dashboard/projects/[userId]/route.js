@@ -23,7 +23,7 @@ export async function POST(req) {
                 }
             },
             include: {
-                members: true 
+                members: true
             }
         });
         return successResponse("Proyecto creado exitosamente", newProject);
@@ -65,3 +65,5 @@ async function getProject(req, { params }) {
 
 // 📌 Proteger la ruta con el middleware
 export const GET = authMiddleware(getProject);
+
+

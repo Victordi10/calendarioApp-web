@@ -184,8 +184,13 @@ const formatDateTime = (dateTimeString) => {
 };
 
 
-export default function ContentCard({ content }) {
+export default function ContentCard({ content, setEdit, setShowEventForm }) {
   const [expanded, setExpanded] = useState(false)
+  const hanledEdit = () => {
+    console.log('editando', content)
+    setEdit(content)
+    setShowEventForm(true)
+  }
 
   if (!content) return null
 
@@ -225,7 +230,7 @@ export default function ContentCard({ content }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <Badge
-                className="text-xs font-medium px-2 py-0.5"
+                className="font-medium px-2 py-0.5"
                 style={{
                   backgroundColor: categoryColor.primary,
                   color: "white",
@@ -233,11 +238,11 @@ export default function ContentCard({ content }) {
               >
                 {content.category}
               </Badge>
-              <Badge variant="outline" className="text-xs font-normal px-2 py-0.5 border-slate-200">
+              <Badge variant="outline" className="font-normal px-2 py-0.5 border-slate-200">
                 {content.socialMedia}
               </Badge>
             </div>
-            <h2 className="text-base font-semibold text-slate-800 truncate">{content.title}</h2>
+            <h2 className="text-lg font-semibold text-slate-800 truncate">{content.title}</h2>
           </div>
         </div>
         <div
@@ -245,7 +250,7 @@ export default function ContentCard({ content }) {
           style={{ backgroundColor: `${statusInfo.color}15` }}
         >
           <StatusIcon className="w-3.5 h-3.5" style={{ color: statusInfo.color }} />
-          <span className="text-xs font-medium" style={{ color: statusInfo.color }}>
+          <span className="text-sm font-medium" style={{ color: statusInfo.color }}>
             {content.status}
           </span>
         </div>
@@ -255,14 +260,15 @@ export default function ContentCard({ content }) {
       <div className="p-5">
         {/* Información del contenido en tarjetas */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+
           <div className="flex flex-col p-3 rounded-xl" style={{ backgroundColor: `${categoryColor.secondary}15` }}>
             <div className="flex items-center gap-2 mb-1">
               <div className="p-1 rounded-md" style={{ backgroundColor: `${categoryColor.secondary}` }}>
                 <ObjectiveIcon className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
               </div>
-              <span className="text-xs text-slate-500">Objetivo</span>
+              <span className="text-sm text-slate-500">Objetivo</span>
             </div>
-            <p className="text-xs font-medium text-slate-700 line-clamp-2">{content.objective}</p>
+            <p className="text-sm font-medium text-slate-700 line-clamp-2">{content.objective}</p>
           </div>
 
           <div className="flex flex-col p-3 rounded-xl" style={{ backgroundColor: `${categoryColor.secondary}15` }}>
@@ -270,9 +276,9 @@ export default function ContentCard({ content }) {
               <div className="p-1 rounded-md" style={{ backgroundColor: `${categoryColor.secondary}` }}>
                 <FormatIcon className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
               </div>
-              <span className="text-xs text-slate-500">Formato</span>
+              <span className="text-sm text-slate-500">Formato</span>
             </div>
-            <p className="text-xs font-medium text-slate-700 capitalize">{content.format}</p>
+            <p className="text-sm font-medium text-slate-700 capitalize">{content.format}</p>
           </div>
 
           <div className="flex flex-col p-3 rounded-xl" style={{ backgroundColor: `${categoryColor.secondary}15` }}>
@@ -280,9 +286,9 @@ export default function ContentCard({ content }) {
               <div className="p-1 rounded-md" style={{ backgroundColor: `${categoryColor.secondary}` }}>
                 <CycleIcon className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
               </div>
-              <span className="text-xs text-slate-500">Ciclo</span>
+              <span className="text-sm text-slate-500">Ciclo</span>
             </div>
-            <p className="text-xs font-medium text-slate-700 capitalize">{content.cycle}</p>
+            <p className="text-sm font-medium text-slate-700 capitalize">{content.cycle}</p>
           </div>
 
           <div className="flex flex-col p-3 rounded-xl" style={{ backgroundColor: `${categoryColor.secondary}15` }}>
@@ -290,7 +296,7 @@ export default function ContentCard({ content }) {
               <div className="p-1 rounded-md" style={{ backgroundColor: `${categoryColor.secondary}` }}>
                 <Clock className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
               </div>
-              <span className="text-xs text-slate-500">Fecha</span>
+              <span className="text-sm text-slate-500">Fecha</span>
             </div>
             <p className="text-xs font-medium text-slate-700">{formattedTime}</p>
           </div>
@@ -299,22 +305,22 @@ export default function ContentCard({ content }) {
         {/* Vista previa del contenido */}
         <div className="rounded-xl p-4 mb-4 relative" style={{ backgroundColor: `${categoryColor.secondary}10` }}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-xs font-medium" style={{ color: categoryColor.primary }}>
+            <h3 className="text-sm font-medium" style={{ color: categoryColor.primary }}>
               Contenido
             </h3>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setExpanded(!expanded)}
-              className="h-6 w-6 p-0 rounded-full"
+              className="h-6 w-6 p-0 rounded-full bg-primary/10"
               style={{ color: "rgba(100, 116, 139, 0.8)" }}
             >
-              {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+              {expanded ? <ChevronUp color="#000" className="h-3.5 w-3.5" /> : <ChevronDown color="#000" className="h-3.5 w-3.5" />}
             </Button>
           </div>
 
           <div className={`overflow-hidden transition-all duration-300 ${expanded ? "max-h-[500px]" : "max-h-16"}`}>
-            <p className="text-xs text-slate-700 leading-relaxed">{content.text}</p>
+            <p className="text-sm text-slate-700 leading-relaxed">{content.text}</p>
           </div>
 
           {!expanded && (
@@ -332,14 +338,14 @@ export default function ContentCard({ content }) {
           <div className="mb-5">
             <div className="flex items-center gap-2 mb-2">
               <Hash className="w-3.5 h-3.5 text-slate-400" />
-              <p className="text-xs text-slate-500">Hashtags</p>
+              <p className="text-sm text-slate-500">Hashtags</p>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {hashtagsArray.map((tag, index) => (
                 <Badge
                   key={index}
                   variant="outline"
-                  className="text-xs font-normal px-2 py-0.5 rounded-md"
+                  className="font-normal px-2 py-0.5 rounded-md"
                   style={{
                     backgroundColor: `${categoryColor.secondary}30`,
                     color: categoryColor.primary,
@@ -353,38 +359,22 @@ export default function ContentCard({ content }) {
           </div>
         )}
 
-        {/* Métricas esperadas */}
-        <div className="grid grid-cols-2 gap-2">
-          <div
-            className="rounded-lg p-2.5 flex items-center gap-2"
-            style={{ backgroundColor: `${categoryColor.secondary}15` }}
-          >
-            <div className="p-1 rounded-full" style={{ backgroundColor: `${categoryColor.secondary}` }}>
-              <MessageSquare className="w-3 h-3" style={{ color: categoryColor.primary }} />
-            </div>
-            <span className="text-xs text-slate-700">Comentarios esperados: 15+</span>
-          </div>
-          <div
-            className="rounded-lg p-2.5 flex items-center gap-2"
-            style={{ backgroundColor: `${categoryColor.secondary}15` }}
-          >
-            <div className="p-1 rounded-full" style={{ backgroundColor: `${categoryColor.secondary}` }}>
-              <Share2 className="w-3 h-3" style={{ color: categoryColor.primary }} />
-            </div>
-            <span className="text-xs text-slate-700">Compartidos: 8+</span>
-          </div>
-        </div>
+
       </div>
 
       {/* Footer con acciones */}
       <div className="flex justify-end gap-2 p-4 border-t border-slate-100">
-        <Button variant="outline" size="sm" className="text-slate-500 border-slate-200 h-8 text-xs font-normal">
+        <Button
+          variant="outline"
+          size="sm" className="text-slate-500 border-slate-200 h-8 text-xs font-normal"
+          onClick={hanledEdit}
+        >
           <Edit className="w-3.5 h-3.5 mr-1.5" />
           Editar
         </Button>
         <Button
           size="sm"
-          className="h-8 text-xs font-normal"
+          className="h-8 text-sms font-normal"
           style={{
             backgroundColor: categoryColor.primary,
             color: "white",
