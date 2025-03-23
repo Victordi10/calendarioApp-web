@@ -37,6 +37,7 @@ export async function POST(req, context) {
         // Verificar si ya existe un evento en la misma fecha
         const existingEvent = await prisma.event.findFirst({
             where: {
+                projectId, // Filtrar por el proyecto específico
                 time: {
                     gte: new Date(`${fecha}T00:00:00.000Z`),
                     lt: new Date(`${fecha}T23:59:59.999Z`)
@@ -173,17 +174,35 @@ async function getContenido(req, context) {
 export const GET = authMiddleware(getContenido);
 
 
-
 export async function PUT(req, context) {
     try {
         const params = await context.params;
         const { userId } = params;
-        const body = await req.json() // ✅ Obtener los datos del body
-        const { eventId, projectId, fecha, hora, ...eventData } = body
+        const body = await req.json(); // ✅ Obtener los datos del body
+        const { eventId, projectId, fecha, hora, ...eventData } = body;
 
         // 🔹 Validar que se envían los datos necesarios
         if (!eventId || !projectId || !userId) {
-            return errorResponse("El ID del evento, proyecto y usuario son obligatorios", 400)
+            return errorResponse("El ID del evento, proyecto y usuario son obligatorios", 400);
+        }
+
+        // 🔹 Convertimos fecha + hora a DateTime
+        const newEventDate = new Date(`${fecha}T${hora}:00.000Z`);
+
+        // 🔹 Verificar si ya existe un evento en la nueva fecha para el mismo proyecto (excepto el que estamos editando)
+        const existingEvent = await prisma.event.findFirst({
+            where: {
+                projectId,
+                time: {
+                    gte: new Date(`${fecha}T00:00:00.000Z`),
+                    lt: new Date(`${fecha}T23:59:59.999Z`)
+                },
+                NOT: { id: eventId } // ❌ Excluir el evento que estamos editando
+            }
+        });
+
+        if (existingEvent) {
+            return errorResponse("Ya existe un evento programado para esta fecha en este proyecto", 409);
         }
 
         // ✅ Mapeo de nombres incorrectos a los correctos
@@ -196,35 +215,35 @@ export async function PUT(req, context) {
             format: eventData.formato,
             text: eventData.copywriten,
             status: eventData.estado,
-            time: new Date(`${fecha}T${hora}:00.000Z`), // 🔹 Convertimos fecha + hora a DateTime
+            time: newEventDate,
         };
 
         // 🔹 Verificar que el usuario tenga permisos para editar
         const project = await prisma.project.findUnique({
             where: { id: projectId },
             include: { owner: true, members: true }
-        })
+        });
 
         if (!project) {
-            return errorResponse("Proyecto no encontrado", 404)
+            return errorResponse("Proyecto no encontrado", 404);
         }
 
-        const isOwner = project.owner.id === userId
-        const isMember = project.members.some(member => member.userId === userId)
+        const isOwner = project.owner.id === userId;
+        const isMember = project.members.some(member => member.userId === userId);
 
         if (!isOwner && !isMember) {
-            return errorResponse("No tienes permisos para editar este evento", 403)
+            return errorResponse("No tienes permisos para editar este evento", 403);
         }
 
         // 🔹 Actualizar el evento
         const updatedEvent = await prisma.event.update({
             where: { id: eventId },
             data: updateData
-        })
+        });
 
-        return successResponse("Evento actualizado exitosamente", updatedEvent)
+        return successResponse("Evento actualizado exitosamente", updatedEvent);
     } catch (error) {
-        console.error("Error en /api/dashboard/projects/event", error)
-        return errorResponse("Error en el servidor", 500)
+        console.error("Error en /api/dashboard/projects/event", error);
+        return errorResponse("Error en el servidor", 500);
     }
 }
