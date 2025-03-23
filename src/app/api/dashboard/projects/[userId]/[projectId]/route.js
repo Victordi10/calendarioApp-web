@@ -1,5 +1,5 @@
 import { successResponse, errorResponse } from "@/utils/handler";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 
 function formatToDateTime(dateStr, timeStr) {
