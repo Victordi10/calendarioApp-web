@@ -88,6 +88,14 @@ export async function GET(req, context) {
 
         console.log("Fecha utilizada:", fecha);
 
+        if (!fecha) {
+            // Si no hay fecha en la query, usar la fecha actual en formato YYYY-MM-DD
+            const now = new Date();
+            fecha = now.toISOString().split("T")[0]; 
+        }
+
+        console.log("Fecha utilizada:", fecha);
+
         const project = await prisma.project.findMany({
             where: { ownerId: userId }, // ✅ Usar ownerId en su lugar
         })
