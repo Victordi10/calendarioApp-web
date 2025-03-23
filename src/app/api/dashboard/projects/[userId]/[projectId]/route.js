@@ -23,6 +23,7 @@ export async function POST(req, context) {
         const params = await context.params;
         const { userId, projectId } = params;
 
+
         // Obtener y validar los datos del cuerpo
         const body = await req.json();
         const { clasificacion, nombre, redSocial, categoria, objetivo, formato, copywriten, hashtags, fecha, hora, estado } = body;
@@ -78,6 +79,9 @@ export async function GET(req, context) {
         const params = await context.params;
         const { userId, projectId } = params;
 
+        console.log("projectId:", projectId);
+
+
         if (!userId || !projectId) {
             return errorResponse("El ID del usuario y del proyecto son obligatorios", 400);
         }
@@ -95,7 +99,7 @@ export async function GET(req, context) {
         console.log("Fecha utilizada:", fecha);
 
         const project = await prisma.project.findMany({
-            where: { ownerId: userId }, // ✅ Usar ownerId en su lugar
+            where: { id: projectId }, // ✅ Usar ownerId en su lugar
         })
 
         // Buscar eventos para la fecha específica

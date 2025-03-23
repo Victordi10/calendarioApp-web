@@ -48,7 +48,7 @@ export default function Dashboard() {
         // Add your logout logic here
         // For example:
         // signOut();
-        router.push('/login');
+        router.push('/');
     };
 
     return (
