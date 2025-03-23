@@ -4,7 +4,11 @@ import { FiHome, FiUsers, FiSettings, FiFileText, FiMenu, FiX, FiLogOut, FiCalen
 
 
 
-export default function Header({menuItems, setMobileMenuOpen, mobileMenuOpen, userId, project}) {
+export default function Header({ menuItems, setMobileMenuOpen, mobileMenuOpen, userId, project }) {
+    const handle = (funcion)=>{
+        setMobileMenuOpen(false);
+        funcion()
+    }
     return (
         <>
             <header className="bg-white border-b border-[#E5E7EB] p-4 flex justify-between items-center">
@@ -32,14 +36,22 @@ export default function Header({menuItems, setMobileMenuOpen, mobileMenuOpen, us
                         <ul>
                             {menuItems.map((item, index) => (
                                 <li key={index}>
-                                    <a
-                                        href={item.path}
-                                        className="flex items-center px-4 py-3 text-[#6C757D] hover:bg-[#F8F9FA] hover:text-[#007AFF] transition-colors"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        {item.icon}
-                                        {item.label}
-                                    </a>
+                                    {item.path ? (
+                                        <a
+                                            href={item.path}
+                                            className="flex items-center px-4 py-3 text-[#6C757D] hover:bg-[#F8F9FA] hover:text-[#007AFF] transition-colors"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            {item.icon} {item.label}
+                                        </a>
+                                    ) : (
+                                        <button
+                                            onClick={()=> handle(item.onClick)}
+                                            className="flex items-center px-4 py-3 w-full text-left text-[#6C757D] hover:bg-[#F8F9FA] hover:text-[#007AFF] transition-colors"
+                                        >
+                                            {item.icon} {item.label}
+                                        </button>
+                                    )}
                                 </li>
                             ))}
                             <li>

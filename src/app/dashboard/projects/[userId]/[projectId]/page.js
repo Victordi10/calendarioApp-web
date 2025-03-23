@@ -13,7 +13,7 @@ import ContentCard from "./content-card";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import Error from "@/components/ui/error";
-
+import Calendario from "./calendario";
 
 export default function ProjectDashboard() {
     const { userId, projectId } = useParams(); // ✅ Obtiene los parámetros de la URL
@@ -24,7 +24,7 @@ export default function ProjectDashboard() {
     const [contenido, setContenido] = useState(null);
     const [project, setProject] = useState(null);
     const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]); // Fecha actual en formato YYYY-MM-DD
-
+    const [screen, setScreen] = useState("main");
 
     // Estado para controlar la visualización del menú móvil
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function ProjectDashboard() {
         estado: "Pendiente",
         projectId: projectId,
     }
-    
+
     // Estado para los datos del formulario
     const [eventData, setEventData] = useState(initialEventData)
 
@@ -104,13 +104,18 @@ export default function ProjectDashboard() {
 
 
     // Lista de opciones del menú
-    const menuItems = [
-        { icon: <FiHome className="mr-3 text-primary" />, label: 'Dashboard', path: `/dashboard/projects/${userId}` },
-        { icon: <FiFileText className="mr-3 text-primary" />, label: 'Calendario', path: `/project/${projectId}/documents` },
-        { icon: <FiUsers className="mr-3 text-primary" />, label: 'Colaboradores', path: `/project/${projectId}/team` },
-        { icon: <FiCalendar className="mr-3 text-primary" />, label: 'Editar', path: `/project/${projectId}/calendar` },
-    ];
+    // Generamos dinámicamente el botón de calendario según la pantalla actual
+    const calendarItem = screen === "calendario"
+        ? { icon: <FiHome className="mr-3 text-primary" />, label: "Volver al Inicio", onClick: () => setScreen("main") }
+        : { icon: <FiCalendar className="mr-3 text-primary" />, label: "Calendario", onClick: () => setScreen("calendario") };
 
+    // Definimos los items del menú y reemplazamos el de calendario con el dinámico
+    const menuItems = [
+        { icon: <FiHome className="mr-3 text-primary" />, label: "Dashboard", path: `/dashboard/projects/${userId}` },
+        calendarItem, // Aquí se actualiza dinámicamente
+        { icon: <FiUsers className="mr-3 text-primary" />, label: "Colaboradores", path: `/project/${projectId}/team` },
+        { icon: <FiFileText className="mr-3 text-primary" />, label: "Editar", onClick: () => alert("Editar Clicked") },
+    ];
     // Cierra el menú móvil cuando se cambia el tamaño de la pantalla
     useEffect(() => {
         const handleResize = () => {
@@ -131,9 +136,68 @@ export default function ProjectDashboard() {
         }
     }, [fecha, getContenido]);
 
-    const hanledCreateEvent = ()=>{
+    const hanledCreateEvent = () => {
         setShowEventForm(true)
         setEdit(null)
+    }
+
+    const Main = () => {
+        return (
+            <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
+
+                <Error error={error} />
+
+                {/* Aquí va el contenido de tu dashboard */}
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-16 space-y-4">
+                        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                        <p className="text-gray-500">Cargando proyectos...</p>
+                    </div>
+                ) : (
+                    <>
+                        {/* <div className="bg-white p-4 mb-4 rounded shadow border border-[#E5E7EB]">
+            <h2 className="text-lg font-medium text-[#212529] mb-4">Resumen del Proyecto</h2>
+            <p className="text-[#6C757D]">Aquí puedes mostrar la información principal de tu proyecto.</p>
+        </div> */}
+                        <ContentCard content={contenido} setEdit={setEdit} setShowEventForm={setShowEventForm} />
+                    </>
+                )}
+
+                {/* Botón flotante para agregar evento */}
+                <button
+                    onClick={() => {
+                        hanledCreateEvent()
+                    }}
+                    className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[#007AFF] text-white flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
+                >
+                    <FiPlus size={24} />
+                </button>
+
+                {/* Modal de formulario para agregar evento */}
+                {showEventForm && (
+                    <div className="fixed inset-0  bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto py-7">
+                            <div className="p-4 border-b border-[#E5E7EB] flex justify-between items-center">
+
+                                <h2 className="text-xl font-semibold text-[#212529] border-b border-[#E5E7EB] pb-2">
+                                    Nuevo Contenido
+                                </h2>
+                                <button
+                                    onClick={() => setShowEventForm(false)}
+                                    className="text-[#6C757D] hover:text-[#212529]"
+                                >
+                                    <FiX size={24} />
+                                </button>
+                            </div>
+
+                            <Error error={error} />
+
+                            <FormEvento projectId={projectId} setContenido={setContenido} userId={userId} handleInputChange={handleInputChange} setEventData={setEventData} setError={setError} eventData={eventData} setShowEventForm={setShowEventForm} editContent={edit} />
+                        </div>
+                    </div>
+                )}
+            </main>
+        )
     }
 
 
@@ -147,60 +211,10 @@ export default function ProjectDashboard() {
                 {/* Header con botón de menú para móviles */}
                 <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project} />
                 {/* Contenido principal */}
-                <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
 
-                    <Error error={error} />
+                {/* Renderizado condicional según la pantalla seleccionada */}
+                {screen === "main" ? <Main /> : <Calendario userId={userId} setEdit={setEdit} projectId={projectId} setError={setError} setShowEventForm={setShowEventForm} />}
 
-                    {/* Aquí va el contenido de tu dashboard */}
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center py-16 space-y-4">
-                            <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                            <p className="text-gray-500">Cargando proyectos...</p>
-                        </div>
-                    ) : (
-                        <>
-                            {/* <div className="bg-white p-4 mb-4 rounded shadow border border-[#E5E7EB]">
-                                <h2 className="text-lg font-medium text-[#212529] mb-4">Resumen del Proyecto</h2>
-                                <p className="text-[#6C757D]">Aquí puedes mostrar la información principal de tu proyecto.</p>
-                            </div> */}
-                            <ContentCard content={contenido} setEdit={setEdit} setShowEventForm={setShowEventForm}/>
-                        </>
-                    )}
-
-                    {/* Botón flotante para agregar evento */}
-                    <button
-                        onClick={() => {
-                            hanledCreateEvent()
-                        }}
-                        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[#007AFF] text-white flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
-                    >
-                        <FiPlus size={24} />
-                    </button>
-
-                    {/* Modal de formulario para agregar evento */}
-                    {showEventForm && (
-                        <div className="fixed inset-0  bg-black bg-opacity-50 flex items-center justify-center z-50">
-                            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto py-7">
-                                <div className="p-4 border-b border-[#E5E7EB] flex justify-between items-center">
-
-                                    <h2 className="text-xl font-semibold text-[#212529] border-b border-[#E5E7EB] pb-2">
-                                        Nuevo Contenido
-                                    </h2>
-                                    <button
-                                        onClick={() => setShowEventForm(false)}
-                                        className="text-[#6C757D] hover:text-[#212529]"
-                                    >
-                                        <FiX size={24} />
-                                    </button>
-                                </div>
-
-                                <Error error={error} />
-
-                                <FormEvento projectId={projectId} setContenido={setContenido} userId={userId} handleInputChange={handleInputChange} setEventData={setEventData} setError={setError} eventData={eventData} setShowEventForm={setShowEventForm} editContent={edit}  />
-                            </div>
-                        </div>
-                    )}
-                </main>
             </div>
         </div>
     );
