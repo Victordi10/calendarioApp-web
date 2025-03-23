@@ -10,13 +10,19 @@ import Header from "./header";
 import { FiHome, FiUsers, FiPlus, FiFileText, FiMenu, FiX, FiLogOut, FiCalendar } from 'react-icons/fi';
 import FormEvento from "./FormEvento";
 import ContentCard from "./content-card";
+import { format, parseISO } from "date-fns";
+import { es } from "date-fns/locale";
+
+
 export default function ProjectDashboard() {
     const { userId, projectId } = useParams(); // ✅ Obtiene los parámetros de la URL
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [contenido, setContenido] = useState(null);
     const [project, setProject] = useState(null);
+    const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]); // Fecha actual en formato YYYY-MM-DD
+
 
     // Estado para controlar la visualización del menú móvil
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -79,7 +85,7 @@ export default function ProjectDashboard() {
 
     // Lista de opciones del menú
     const menuItems = [
-        { icon: <FiHome className="mr-3 text-primary" />, label: 'Dashboard', path: `/project/${userId}` },
+        { icon: <FiHome className="mr-3 text-primary" />, label: 'Dashboard', path: `/dashboard/projects/${userId}` },
         { icon: <FiFileText className="mr-3 text-primary" />, label: 'Calendario', path: `/project/${projectId}/documents` },
         { icon: <FiUsers className="mr-3 text-primary" />, label: 'Colaboradores', path: `/project/${projectId}/team` },
         { icon: <FiCalendar className="mr-3 text-primary" />, label: 'Editar', path: `/project/${projectId}/calendar` },
@@ -100,8 +106,10 @@ export default function ProjectDashboard() {
     }, []);
 
     useEffect(() => {
-        getContenido();
-    }, [getContenido]);
+        if (fecha) {
+            getContenido(fecha);
+        }
+    }, [fecha, getContenido]);
 
 
     return (
@@ -124,7 +132,7 @@ export default function ProjectDashboard() {
                                 className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 relative"
                             >
                                 <button
-                                    onClick={dismissError}
+                                    onClick={() => setError(null)}
                                     className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                                 >
                                     ×
@@ -176,7 +184,7 @@ export default function ProjectDashboard() {
                                     </button>
                                 </div>
 
-                                <FormEvento handleInputChange={handleInputChange} setEventData={setEventData} setError={setError} eventData={eventData} setShowEventForm={setShowEventForm} />
+                                <FormEvento projectId={projectId} setContenido={setContenido} userId={userId} handleInputChange={handleInputChange} setEventData={setEventData} setError={setError} eventData={eventData} setShowEventForm={setShowEventForm} />
                             </div>
                         </div>
                     )}

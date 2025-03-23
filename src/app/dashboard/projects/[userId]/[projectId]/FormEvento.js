@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Loader from '@/components/ui/loader';
 
-export default function FormEvento({ eventData, setError, setEventData, handleInputChange, setShowEventForm }) {
+export default function FormEvento({ eventData, userId, setContenido, projectId, setError, setEventData, handleInputChange, setShowEventForm }) {
     const [loading, setLoading] = useState(false);
     // Manejar envío del formulario
     const handleSubmit = async (e) => {
@@ -21,8 +21,9 @@ export default function FormEvento({ eventData, setError, setEventData, handleIn
             if (!res.ok) {
                 throw new Error(data.message || "Error al publicar el evento");
             }
+            console.log(data.data);
 
-            alert("Evento publicado exitosamente!");
+            setContenido(data.data);
         } catch (error) {
             console.error("Error al publicar el evento", error);
             setError(error.message || "Ocurrió un Error al publicar el evento");

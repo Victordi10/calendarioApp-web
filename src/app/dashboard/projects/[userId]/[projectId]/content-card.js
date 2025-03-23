@@ -34,7 +34,8 @@ import {
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-
+import { parseISO, format, isToday, isTomorrow, differenceInDays } from "date-fns";
+import { es } from "date-fns/locale";
 // Mapeo de iconos para redes sociales (en minúsculas para coincidir con el JSON)
 const socialIcons = {
   instagram: Instagram,
@@ -72,26 +73,62 @@ const objectiveIcons = {
 // Mapeo de colores para categorías
 const categoryColors = {
   Consejo: {
-    primary: "#22C55E",
+    primary: "#22C55E", // Verde
     secondary: "#DCFCE7",
   },
   Tips: {
-    primary: "#3B82F6",
+    primary: "#3B82F6", // Azul
     secondary: "#DBEAFE",
   },
   Promoción: {
-    primary: "#F59E0B",
+    primary: "#F59E0B", // Naranja
     secondary: "#FEF3C7",
   },
   Evento: {
-    primary: "#8B5CF6",
+    primary: "#8B5CF6", // Morado
     secondary: "#EDE9FE",
   },
   Tutorial: {
-    primary: "#EC4899",
+    primary: "#EC4899", // Rosa
     secondary: "#FCE7F3",
   },
-}
+  Noticia: {
+    primary: "#EF4444", // Rojo
+    secondary: "#FEE2E2",
+  },
+  Entrevista: {
+    primary: "#14B8A6", // Turquesa
+    secondary: "#CCFBF1",
+  },
+  Reseña: {
+    primary: "#9333EA", // Púrpura oscuro
+    secondary: "#E9D5FF",
+  },
+  Anuncio: {
+    primary: "#F43F5E", // Rojo intenso
+    secondary: "#FFE4E6",
+  },
+  Inspiración: {
+    primary: "#0EA5E9", // Azul celeste
+    secondary: "#E0F2FE",
+  },
+  Curiosidad: {
+    primary: "#EAB308", // Amarillo
+    secondary: "#FEF9C3",
+  },
+  Opinión: {
+    primary: "#4B5563", // Gris oscuro
+    secondary: "#E5E7EB",
+  },
+  Historia: {
+    primary: "#B45309", // Marrón
+    secondary: "#FDE68A",
+  },
+  Trivia: {
+    primary: "#10B981", // Verde esmeralda
+    secondary: "#D1FAE5",
+  },
+};
 
 // Mapeo de iconos y colores para estados
 const statusConfig = {
@@ -114,31 +151,38 @@ const statusConfig = {
 }
 
 // Función para formatear fecha y hora
+
+
+
 const formatDateTime = (dateTimeString) => {
   try {
-    const date = new Date(dateTimeString)
+    if (!dateTimeString) return dateTimeString;
 
-    // Si la fecha no es válida, devolver el string original
-    if (isNaN(date.getTime())) return dateTimeString
+    const date = parseISO(dateTimeString);
+    if (isNaN(date.getTime())) return dateTimeString;
 
-    // Formatear solo la hora si es una hora válida
-    if (dateTimeString.includes("T")) {
-      return date.toLocaleTimeString("es-ES", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+    const daysDiff = differenceInDays(date, new Date());
+
+    let dateLabel;
+
+    if (isToday(date)) {
+      dateLabel = "Hoy";
+    } else if (isTomorrow(date)) {
+      dateLabel = "Mañana";
+    } else if (daysDiff > 0 && daysDiff <= 7) {
+      dateLabel = format(date, "EEEE", { locale: es }); // Día de la semana en español
+    } else {
+      dateLabel = format(date, "dd/MM/yyyy", { locale: es }); // Fecha completa
     }
 
-    // Formatear fecha completa
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    })
+    const timeLabel = format(date, "hh:mm a", { locale: es }); // Hora en formato 12h
+
+    return `${dateLabel} a las ${timeLabel}`;
   } catch (error) {
-    return dateTimeString
+    return dateTimeString;
   }
-}
+};
+
 
 export default function ContentCard({ content }) {
   const [expanded, setExpanded] = useState(false)
@@ -246,7 +290,7 @@ export default function ContentCard({ content }) {
               <div className="p-1 rounded-md" style={{ backgroundColor: `${categoryColor.secondary}` }}>
                 <Clock className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
               </div>
-              <span className="text-xs text-slate-500">Hora</span>
+              <span className="text-xs text-slate-500">Fecha</span>
             </div>
             <p className="text-xs font-medium text-slate-700">{formattedTime}</p>
           </div>

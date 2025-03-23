@@ -86,8 +86,6 @@ export async function GET(req, context) {
         const { searchParams } = new URL(req.url);
         let fecha = searchParams.get("fecha") || new Date().toISOString().split("T")[0]; // Fecha en formato YYYY-MM-DD
 
-        console.log("Fecha utilizada:", fecha);
-
         if (!fecha) {
             // Si no hay fecha en la query, usar la fecha actual en formato YYYY-MM-DD
             const now = new Date();
