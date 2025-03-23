@@ -89,6 +89,10 @@ export async function GET(req, context) {
 
         console.log("Fecha utilizada:", fecha);
 
+        const project = await prisma.project.findMany({
+            where: { ownerId: userId }, // ✅ Usar ownerId en su lugar
+        })
+
         // Buscar eventos para la fecha específica
         let events = await prisma.event.findMany({
             where: {
@@ -119,7 +123,7 @@ export async function GET(req, context) {
             });
         }
 
-        return successResponse("Eventos obtenidos exitosamente", events);
+        return successResponse("Eventos obtenidos exitosamente", { events, project });
     } catch (error) {
         console.error("Error en /api/dashboard/projects/[userId]/[projectId]", error);
         return errorResponse("Error en el servidor", 500);

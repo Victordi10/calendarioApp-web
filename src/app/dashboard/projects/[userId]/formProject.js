@@ -33,7 +33,7 @@ export default function FormProject({ userId, setError, setNewProject, setShowFo
         }
 
         try {
-            const res = await fetch("/api/dashboard/projects", {
+            const res = await fetch(`/api/dashboard/projects/${userId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, userId }),

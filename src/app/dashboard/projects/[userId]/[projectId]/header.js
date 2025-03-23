@@ -4,7 +4,7 @@ import { FiHome, FiUsers, FiSettings, FiFileText, FiMenu, FiX, FiLogOut, FiCalen
 
 
 
-export default function Header({menuItems, setMobileMenuOpen, mobileMenuOpen, userId}) {
+export default function Header({menuItems, setMobileMenuOpen, mobileMenuOpen, userId, project}) {
     return (
         <>
             <header className="bg-white border-b border-[#E5E7EB] p-4 flex justify-between items-center">
@@ -15,12 +15,12 @@ export default function Header({menuItems, setMobileMenuOpen, mobileMenuOpen, us
                     >
                         {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
                     </button>
-                    <h1 className="text-xl font-semibold text-[#212529]">Dashboard del Proyecto</h1>
+                    <h1 className="text-xl font-semibold text-[#212529]">{project?.name}</h1>
                 </div>
 
                 <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 rounded-full bg-[#007AFF] text-white flex items-center justify-center">
-                        {userId?.charAt(0) || 'U'}
+                        {userId?.charAt(0) || 'V'}
                     </div>
                 </div>
             </header>

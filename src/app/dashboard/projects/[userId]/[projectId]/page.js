@@ -16,6 +16,7 @@ export default function ProjectDashboard() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [contenido, setContenido] = useState(null);
+    const [project, setProject] = useState(null);
 
     // Estado para controlar la visualización del menú móvil
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,9 +64,10 @@ export default function ProjectDashboard() {
                 setError("No hay eventos disponibles");
             }
 
-            console.log(data.data[0])
+            console.log(data.data)
 
-            setContenido(data.data[0]);
+            setContenido(data.data.events[0]);
+            setProject(data.data.project[0]);
         } catch (error) {
             console.error("Error al obtener el evento", error);
             setError(error.message || "Ocurrió un error al obtener el evento");
@@ -107,7 +109,7 @@ export default function ProjectDashboard() {
             {/* Contenido principal */}
             <div className="flex-1 flex flex-col">
                 {/* Header con botón de menú para móviles */}
-                <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} />
+                <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project}/>
                 {/* Contenido principal */}
                 <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
                     <AnimatePresence>
