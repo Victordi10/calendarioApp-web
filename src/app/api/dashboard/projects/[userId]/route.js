@@ -1,6 +1,6 @@
 import { successResponse, errorResponse } from "@/utils/handler";
 import { prisma } from "@/lib/prisma";
-
+import { authMiddleware } from "@/middleware/authMiddleware"; // 📌 Importamos el middleware
 
 export async function POST(req) {
     try {
@@ -34,7 +34,8 @@ export async function POST(req) {
 }
 
 
-export async function GET(req, { params }) {
+
+async function getProject(req, { params }) {
     try {
         const { userId } = params; // ✅ Obtiene el parámetro correctamente
 
@@ -42,9 +43,14 @@ export async function GET(req, { params }) {
             return errorResponse("El ID del usuario es obligatorio", 400);
         }
 
+        // 📌 Verificar que el usuario autenticado es el mismo que solicita los proyectos
+        if (req.user.id !== userId) {
+            return errorResponse("No tienes permisos para ver estos proyectos", 403);
+        }
+
         const projects = await prisma.project.findMany({
-            where: { ownerId: userId }, // ✅ Usar ownerId en su lugar
-        })
+            where: { ownerId: userId },
+        });
 
         if (projects.length === 0) {
             return errorResponse("No se encontraron proyectos", 404);
@@ -56,3 +62,6 @@ export async function GET(req, { params }) {
         return errorResponse("Error en el servidor", 500);
     }
 }
+
+// 📌 Proteger la ruta con el middleware
+export const GET = authMiddleware(getProject);

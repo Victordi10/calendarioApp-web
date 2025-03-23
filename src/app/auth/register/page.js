@@ -50,6 +50,7 @@ export default function Register() {
                 return
             }
             console.log("Usuario creado:", data.data);
+            localStorage.setItem("token", data.data.token);
 
             router.push(`/dashboard/projects/${data.data.id}`); //// Redirige al dashboard después del login
         } catch (err) {

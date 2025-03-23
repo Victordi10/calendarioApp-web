@@ -39,10 +39,14 @@ export default function Login() {
                 setLoading(false);
                 return;
             }
+            console.log(data.data);
+            localStorage.setItem("token", data.data.token);
 
             router.push(`/dashboard/projects/${data.data.user.id}`); // Redirige al dashboard después del login
         } catch (err) {
             setError(err.message || "Ocurrió un error durante el inicio de sesión");
+            setLoading(false);
+        }finally{
             setLoading(false);
         }
     };

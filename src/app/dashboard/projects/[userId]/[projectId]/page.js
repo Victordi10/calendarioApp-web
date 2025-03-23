@@ -59,7 +59,21 @@ export default function ProjectDashboard() {
         setError(null);
         setLoading(true);
         try {
-            const res = await fetch(`/api/dashboard/projects/${userId}/${projectId}?fecha=${fecha}`);
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                console.error("No hay token, acceso denegado");
+                return;
+            }
+
+            const res = await fetch(`/api/dashboard/projects/${userId}/${projectId}?fecha=${fecha}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`, // 📌 Enviar token correctamente
+                },
+            });
+            
             const data = await res.json();
 
             if (!res.ok) {

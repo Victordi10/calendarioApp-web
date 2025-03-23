@@ -19,11 +19,28 @@ export default function Dashboard() {
         const fetchProjects = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/dashboard/projects/${userId}`);
+                const token = localStorage.getItem("token");
+        
+                if (!token) {
+                    console.error("No hay token, acceso denegado");
+                    return;
+                }
+        
+                //console.log("Token enviado:", token); // 👀 Verificar que hay token
+        
+                const res = await fetch(`/api/dashboard/projects/${userId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`, // 📌 Enviar token correctamente
+                    },
+                });
+        
                 const data = await res.json();
                 if (!res.ok) {
                     throw new Error(data.message || "Error al obtener los proyectos");
                 }
+        
                 setProjects(data.data.projects);
             } catch (error) {
                 console.error("Error al obtener los proyectos", error);
@@ -31,7 +48,7 @@ export default function Dashboard() {
             } finally {
                 setLoading(false);
             }
-        }
+        };
         fetchProjects();
     }, [userId]);
 
@@ -45,10 +62,9 @@ export default function Dashboard() {
     const dismissError = () => setError("");
 
     const handleLogout = () => {
-        // Add your logout logic here
-        // For example:
-        // signOut();
-        router.push('/');
+        localStorage.removeItem("token");
+        console.log("Sesión cerrada");
+        router.push('/auth/login');
     };
 
     return (

@@ -1,6 +1,6 @@
 import { successResponse, errorResponse } from "@/utils/handler";
 import { prisma } from "@/lib/prisma";
-
+import { authMiddleware } from "@/middleware/authMiddleware";
 
 function formatToDateTime(dateStr, timeStr) {
     console.log('Fecha:', dateStr);
@@ -73,7 +73,8 @@ export async function POST(req, context) {
 }
 
 
-export async function GET(req, context) {
+
+async function getContenido(req, context) {
     try {
         // Obtener parámetros correctamente
         const params = await context.params;
@@ -93,7 +94,7 @@ export async function GET(req, context) {
         if (!fecha) {
             // Si no hay fecha en la query, usar la fecha actual en formato YYYY-MM-DD
             const now = new Date();
-            fecha = now.toISOString().split("T")[0]; 
+            fecha = now.toISOString().split("T")[0];
         }
 
         console.log("Fecha utilizada:", fecha);
@@ -138,3 +139,4 @@ export async function GET(req, context) {
         return errorResponse("Error en el servidor", 500);
     }
 }
+export const GET = authMiddleware(getContenido);
