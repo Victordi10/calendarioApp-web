@@ -172,10 +172,28 @@ export default function ProjectDashboard() {
                 >
                     <FiPlus size={24} />
                 </button>
+            </main>
+        )
+    }
+
+
+    return (
+        <div className="flex h-screen bg-[#F8F9FA]">
+            {/* Sidebar para pantallas grandes (md y superiores) */}
+            <Aside menuItems={menuItems} />
+
+            {/* Contenido principal */}
+            <div className="flex-1 flex flex-col">
+                {/* Header con botón de menú para móviles */}
+                <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project} />
+                {/* Contenido principal */}
+
+                {/* Renderizado condicional según la pantalla seleccionada */}
+                {screen === "main" ? <Main /> : <Calendario userId={userId} setEdit={setEdit} projectId={projectId} setError={setError} setShowEventForm={setShowEventForm} />}
 
                 {/* Modal de formulario para agregar evento */}
                 {showEventForm && (
-                    <div className="fixed inset-0  bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                         <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto py-7">
                             <div className="p-4 border-b border-[#E5E7EB] flex justify-between items-center">
 
@@ -196,24 +214,6 @@ export default function ProjectDashboard() {
                         </div>
                     </div>
                 )}
-            </main>
-        )
-    }
-
-
-    return (
-        <div className="flex h-screen bg-[#F8F9FA]">
-            {/* Sidebar para pantallas grandes (md y superiores) */}
-            <Aside menuItems={menuItems} />
-
-            {/* Contenido principal */}
-            <div className="flex-1 flex flex-col">
-                {/* Header con botón de menú para móviles */}
-                <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project} />
-                {/* Contenido principal */}
-
-                {/* Renderizado condicional según la pantalla seleccionada */}
-                {screen === "main" ? <Main /> : <Calendario userId={userId} setEdit={setEdit} projectId={projectId} setError={setError} setShowEventForm={setShowEventForm} />}
 
             </div>
         </div>

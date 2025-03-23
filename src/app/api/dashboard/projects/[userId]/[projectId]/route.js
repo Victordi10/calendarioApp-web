@@ -82,63 +82,94 @@ async function getContenido(req, context) {
 
         console.log("projectId:", projectId);
 
-
         if (!userId || !projectId) {
             return errorResponse("El ID del usuario y del proyecto son obligatorios", 400);
         }
 
         // Obtener la fecha de la query o usar la fecha actual
         const { searchParams } = new URL(req.url);
-        let fecha = searchParams.get("fecha") || new Date().toISOString().split("T")[0]; // Fecha en formato YYYY-MM-DD
+        let fecha = searchParams.get("fecha") || new Date().toISOString().split("T")[0]; // Formato YYYY-MM-DD o YYYY-MM
+        console.log("Fecha recibida:", fecha);
 
-        if (!fecha) {
-            // Si no hay fecha en la query, usar la fecha actual en formato YYYY-MM-DD
-            const now = new Date();
-            fecha = now.toISOString().split("T")[0];
-        }
+        let events = [];
 
-        console.log("Fecha utilizada:", fecha);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+            // ✅ Caso 1: Se recibe una fecha con día (YYYY-MM-DD)
+            const fechaInicio = new Date(`${fecha}T00:00:00.000Z`);
+            const fechaFin = new Date(`${fecha}T23:59:59.999Z`);
 
-        const project = await prisma.project.findMany({
-            where: { id: projectId }, // ✅ Usar ownerId en su lugar
-        })
+            console.log("Buscando eventos del día:", fechaInicio.toISOString());
 
-        // Buscar eventos para la fecha específica
-        let events = await prisma.event.findMany({
-            where: {
-                projectId,
-                time: {
-                    gte: new Date(`${fecha}T00:00:00.000Z`),
-                    lt: new Date(`${fecha}T23:59:59.999Z`),
-                },
-            },
-            orderBy: {
-                time: "asc",
-            },
-        });
-
-        // Si no hay eventos en la fecha dada, buscar el próximo evento más cercano
-        if (events.length === 0) {
             events = await prisma.event.findMany({
                 where: {
                     projectId,
                     time: {
-                        gt: new Date(`${fecha}T23:59:59.999Z`), // Buscar eventos después de la fecha actual
+                        gte: fechaInicio,
+                        lt: fechaFin,
                     },
                 },
                 orderBy: {
                     time: "asc",
                 },
-                take: 1, // Solo obtener el más cercano
             });
+
+            // Si no hay eventos, buscar el próximo evento más cercano
+            if (events.length === 0) {
+                console.log("No hay eventos en la fecha exacta, buscando el próximo más cercano...");
+                events = await prisma.event.findMany({
+                    where: {
+                        projectId,
+                        time: {
+                            gt: fechaFin, // Buscar eventos después de la fecha actual
+                        },
+                    },
+                    orderBy: {
+                        time: "asc",
+                    },
+                    take: 1, // Solo obtener el más cercano
+                });
+            }
+
+        } else if (/^\d{4}-\d{2}$/.test(fecha)) {
+            // ✅ Caso 2: Se recibe solo año y mes (YYYY-MM), buscar todo el mes
+            const year = parseInt(fecha.split("-")[0], 10);
+            const month = parseInt(fecha.split("-")[1], 10) - 1;
+
+            const startOfMonth = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+            const endOfMonth = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+
+            console.log("Buscando eventos del mes:", startOfMonth.toISOString(), "hasta", endOfMonth.toISOString());
+
+            events = await prisma.event.findMany({
+                where: {
+                    projectId,
+                    time: {
+                        gte: startOfMonth,
+                        lt: endOfMonth,
+                    },
+                },
+                orderBy: {
+                    time: "asc",
+                },
+            });
+
+        } else {
+            return errorResponse("Formato de fecha inválido. Usa YYYY-MM-DD o YYYY-MM", 400);
         }
 
+        // Obtener datos del proyecto
+        const project = await prisma.project.findUnique({
+            where: { id: projectId },
+        });
+
         return successResponse("Eventos obtenidos exitosamente", { events, project });
+
     } catch (error) {
         console.error("Error en /api/dashboard/projects/[userId]/[projectId]", error);
         return errorResponse("Error en el servidor", 500);
     }
 }
+
 export const GET = authMiddleware(getContenido);
 
 
