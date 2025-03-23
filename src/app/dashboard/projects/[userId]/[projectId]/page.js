@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Calendar, Loader2, LogOut, Filter, Search, Settings } from 'lucide-react';
@@ -49,7 +49,7 @@ export default function ProjectDashboard() {
         });
     };
 
-    const getContenido = async (fecha) => {
+    const getContenido = useCallback(async (fecha) => {
         setError(null);
         setLoading(true);
         try {
@@ -74,7 +74,9 @@ export default function ProjectDashboard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userId, projectId]);
+
+
     // Lista de opciones del menú
     const menuItems = [
         { icon: <FiHome className="mr-3 text-primary" />, label: 'Dashboard', path: `/project/${userId}` },
@@ -98,8 +100,9 @@ export default function ProjectDashboard() {
     }, []);
 
     useEffect(() => {
-        getContenido(new Date().toISOString().split('T')[0]);
-    }, []);
+        getContenido();
+    }, [getContenido]);
+
 
     return (
         <div className="flex h-screen bg-[#F8F9FA]">
@@ -109,7 +112,7 @@ export default function ProjectDashboard() {
             {/* Contenido principal */}
             <div className="flex-1 flex flex-col">
                 {/* Header con botón de menú para móviles */}
-                <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project}/>
+                <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project} />
                 {/* Contenido principal */}
                 <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
                     <AnimatePresence>
@@ -144,7 +147,7 @@ export default function ProjectDashboard() {
                                 <h2 className="text-lg font-medium text-[#212529] mb-4">Resumen del Proyecto</h2>
                                 <p className="text-[#6C757D]">Aquí puedes mostrar la información principal de tu proyecto.</p>
                             </div>
-                            <ContentCard content={contenido}/>
+                            <ContentCard content={contenido} />
                         </>
                     )}
 
