@@ -27,7 +27,7 @@ export default function Aside({ menuItems }) {
                                 </a>
                             ) : (
                                 <button
-                                    onClick={() => handle(item.onClick)}
+                                    onClick={() => item.onClick}
                                     className="flex items-center px-4 py-3 w-full text-left text-[#6C757D] hover:bg-[#F8F9FA] hover:text-[#007AFF] transition-colors"
                                 >
                                     {item.icon} {item.label}
