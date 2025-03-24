@@ -6,17 +6,17 @@ import { cn } from "@/lib/utils"
 
 // Datos de opciones para los selects
 const CLASIFICACIONES = [
-    { value: "descubrimiento", label: "Descubrimiento" },
-    { value: "consideracion", label: "Consideración" },
-    { value: "desicion", label: "Decisión" },
+    { value: "valor", label: "Descubrimiento" },
+    { value: "posicionamiento", label: "Posicionamiento" },
+    { value: "venta", label: "Venta" },
 ]
 
 const REDES_SOCIALES = [
     { value: "facebook", label: "Facebook" },
-    { value: "instagram", label: "Instagram" },
+    { value: "instagram/tiktok", label: "Instagram/TikTok" },
     { value: "twitter", label: "Twitter" },
     { value: "linkedin", label: "LinkedIn" },
-    { value: "tiktok", label: "TikTok" },
+    { value: "youtube", label: "YouTube" },
 ]
 
 const FORMATOS = [
@@ -118,7 +118,7 @@ export default function FormEvento({
     useEffect(() => {
         if (editContent) {
             setEventData({
-                clasificacion: editContent.cycle || "",
+                clasificacion: editContent.type || "",
                 nombre: editContent.title || "",
                 redSocial: editContent.socialMedia || "",
                 categoria: editContent.category || "",

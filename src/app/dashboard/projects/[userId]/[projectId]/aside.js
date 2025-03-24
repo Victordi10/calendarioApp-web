@@ -6,7 +6,7 @@ import Loader from "@/components/ui/loader";
 import { FiHome, FiUsers, FiSettings, FiFileText, FiMenu, FiX, FiLogOut, FiCalendar } from 'react-icons/fi';
 
 
-export default function Aside({menuItems}) {
+export default function Aside({ menuItems }) {
     return (
         <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E5E7EB]">
             <div className="p-4 border-b border-[#E5E7EB]">
@@ -17,13 +17,22 @@ export default function Aside({menuItems}) {
                 <ul>
                     {menuItems.map((item, index) => (
                         <li key={index}>
-                            <a
-                                href={item.path}
-                                className="flex items-center px-4 py-3 text-[#6C757D] hover:bg-[#F8F9FA] hover:text-[#007AFF] transition-colors"
-                            >
-                                {item.icon}
-                                {item.label}
-                            </a>
+                            {item.path ? (
+                                <a
+                                    href={item.path}
+                                    className="flex items-center px-4 py-3 text-[#6C757D] hover:bg-[#F8F9FA] hover:text-[#007AFF] transition-colors"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    {item.icon} {item.label}
+                                </a>
+                            ) : (
+                                <button
+                                    onClick={() => handle(item.onClick)}
+                                    className="flex items-center px-4 py-3 w-full text-left text-[#6C757D] hover:bg-[#F8F9FA] hover:text-[#007AFF] transition-colors"
+                                >
+                                    {item.icon} {item.label}
+                                </button>
+                            )}
                         </li>
                     ))}
                 </ul>

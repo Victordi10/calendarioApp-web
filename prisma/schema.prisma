@@ -52,18 +52,19 @@ model ProjectUser {
 
 model Event {
   id          String   @id @default(uuid())
-  cycle       String
+  type        String  // Cambié cycle por type
   title       String
   socialMedia String
   category    String
   objective   String
   format      String
-  text        String
+  text        String   @db.Text
   hashtags    String?
-  time        DateTime // HORA Y FECHA DEL EVENTO
+  time        DateTime
   status      String
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+

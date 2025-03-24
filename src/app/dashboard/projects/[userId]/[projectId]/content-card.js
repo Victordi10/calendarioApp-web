@@ -288,7 +288,7 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
               </div>
               <span className="text-sm text-slate-500">Ciclo</span>
             </div>
-            <p className="text-sm font-medium text-slate-700 capitalize">{content.cycle}</p>
+            <p className="text-sm font-medium text-slate-700 capitalize">{content.type}</p>
           </div>
 
           <div className="flex flex-col p-3 rounded-xl" style={{ backgroundColor: `${categoryColor.secondary}15` }}>

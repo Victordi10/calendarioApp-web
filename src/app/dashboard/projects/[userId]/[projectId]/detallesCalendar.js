@@ -70,7 +70,7 @@ const EventDetails = ({ eventoSeleccionado, onClose, editarContenido  }) => {
                 </div>
                 <div>
                   <p className="text-sm text-textTwo">Ciclo</p>
-                  <p className="font-medium">{eventoSeleccionado.cycle || 'No especificado'}</p>
+                  <p className="font-medium">{eventoSeleccionado.type || 'No especificado'}</p>
                 </div>
               </div>
               

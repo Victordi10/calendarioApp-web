@@ -149,7 +149,7 @@ const EventDisplay = ({ event }) => {
                             <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 mb-3">
                                 <div className="flex items-center">
                                     <span className="text-xs font-medium text-gray-500 uppercase mr-1">Tipo:</span>
-                                    <span className="capitalize">{event.cycle}</span>
+                                    <span className="capitalize">{event.type}</span>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-xs font-medium text-gray-500 uppercase mr-1">formato:</span>
