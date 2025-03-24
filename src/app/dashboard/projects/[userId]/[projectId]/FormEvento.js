@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 
 // Datos de opciones para los selects
 const CLASIFICACIONES = [
-    { value: "valor", label: "Descubrimiento" },
+    { value: "valor", label: "Valor" },
     { value: "posicionamiento", label: "Posicionamiento" },
     { value: "venta", label: "Venta" },
 ]

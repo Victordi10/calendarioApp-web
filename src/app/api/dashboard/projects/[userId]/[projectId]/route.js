@@ -52,7 +52,7 @@ export async function POST(req, context) {
         // Crear evento en la base de datos
         const newEvent = await prisma.event.create({
             data: {
-                cycle: clasificacion,
+                type: clasificacion,
                 title: nombre,
                 socialMedia: redSocial,
                 category: categoria,
@@ -207,7 +207,7 @@ export async function PUT(req, context) {
 
         // ✅ Mapeo de nombres incorrectos a los correctos
         const updateData = {
-            cycle: eventData.clasificacion,
+            type: eventData.clasificacion,
             title: eventData.nombre,
             socialMedia: eventData.redSocial,
             category: eventData.categoria,
