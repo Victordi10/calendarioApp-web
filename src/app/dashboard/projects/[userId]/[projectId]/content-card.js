@@ -60,7 +60,7 @@ const typeIcons = {
   valor: Sparkles,
   posicionamiento: Eye,
   venta: CheckCheck,
-} 
+}
 
 // Mapeo de iconos para objetivos
 const objectiveIcons = {
@@ -206,12 +206,11 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
     color: "#64748B",
   }
 
-  // Obtener los iconos correspondientes
-  const SocialIcon = socialIcons[content.socialMedia.toLowerCase()] || Instagram
-  const FormatIcon = formatIcons[content.format.toLowerCase()] || ImageIcon
-  const TypeIcon = typeIcons[content.type.toLowerCase()] || Sparkles
-  const ObjectiveIcon = objectiveIcons[content.objective] || Target
-  const StatusIcon = statusInfo.icon
+  const SocialIcon = content?.socialMedia ? socialIcons[content.socialMedia.toLowerCase()] || Instagram : Instagram;
+  const FormatIcon = content?.format ? formatIcons[content.format.toLowerCase()] || ImageIcon : ImageIcon;
+  const TypeIcon = content?.type ? typeIcons[content.type.toLowerCase()] || Sparkles : Sparkles;
+  const ObjectiveIcon = content?.objective ? objectiveIcons[content.objective] || Target : Target;
+  const StatusIcon = statusInfo?.icon || DefaultStatusIcon; // Asegura que statusInfo exista
 
   // Convertir hashtags en un array
   const hashtagsArray = content.hashtags.split(" ").filter((tag) => tag.trim() !== "")
@@ -366,7 +365,7 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
       <div className="flex justify-end gap-2 p-4 border-t border-slate-100">
         <Button
           variant="outline"
-          size="sm" 
+          size="sm"
           className="h-8 text-sms font-normal"
           style={{
             backgroundColor: categoryColor.primary,
