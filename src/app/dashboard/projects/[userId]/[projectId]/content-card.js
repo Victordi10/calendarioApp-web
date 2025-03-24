@@ -56,11 +56,11 @@ const formatIcons = {
 }
 
 // Mapeo de iconos para ciclos
-const cycleIcons = {
-  descubrimiento: Sparkles,
-  consideración: Eye,
-  decisión: CheckCheck,
-}
+const typeIcons = {
+  valor: Sparkles,
+  posicionamiento: Eye,
+  venta: CheckCheck,
+} 
 
 // Mapeo de iconos para objetivos
 const objectiveIcons = {
@@ -209,7 +209,7 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
   // Obtener los iconos correspondientes
   const SocialIcon = socialIcons[content.socialMedia.toLowerCase()] || Instagram
   const FormatIcon = formatIcons[content.format.toLowerCase()] || ImageIcon
-  const CycleIcon = cycleIcons[content.cycle.toLowerCase()] || Sparkles
+  const TypeIcon = typeIcons[content.type.toLowerCase()] || Sparkles
   const ObjectiveIcon = objectiveIcons[content.objective] || Target
   const StatusIcon = statusInfo.icon
 
@@ -284,7 +284,7 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
           <div className="flex flex-col p-3 rounded-xl" style={{ backgroundColor: `${categoryColor.secondary}15` }}>
             <div className="flex items-center gap-2 mb-1">
               <div className="p-1 rounded-md" style={{ backgroundColor: `${categoryColor.secondary}` }}>
-                <CycleIcon className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
+                <TypeIcon className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
               </div>
               <span className="text-sm text-slate-500">Ciclo</span>
             </div>
@@ -320,7 +320,7 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
           </div>
 
           <div className={`overflow-hidden transition-all duration-300 ${expanded ? "max-h-[500px]" : "max-h-16"}`}>
-            <p className="text-sm text-slate-700 leading-relaxed">{content.text}</p>
+            <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">{content.text}</p>
           </div>
 
           {!expanded && (
@@ -366,22 +366,16 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
       <div className="flex justify-end gap-2 p-4 border-t border-slate-100">
         <Button
           variant="outline"
-          size="sm" className="text-slate-500 border-slate-200 h-8 text-xs font-normal"
-          onClick={hanledEdit}
-        >
-          <Edit className="w-3.5 h-3.5 mr-1.5" />
-          Editar
-        </Button>
-        <Button
-          size="sm"
+          size="sm" 
           className="h-8 text-sms font-normal"
           style={{
             backgroundColor: categoryColor.primary,
             color: "white",
           }}
+          onClick={hanledEdit}
         >
-          <Send className="w-3.5 h-3.5 mr-1.5" />
-          Publicar
+          <Edit className="w-3.5 h-3.5 mr-1.5" />
+          Editar
         </Button>
       </div>
     </Card>

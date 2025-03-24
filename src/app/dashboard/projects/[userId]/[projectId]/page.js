@@ -143,7 +143,7 @@ export default function ProjectDashboard() {
 
     const Main = () => {
         return (
-            <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
+            <main className="flex-1 p-4 pb-6 mb-4  bg-[#F8F9FA] overflow-y-auto relative">
 
                 <Error error={error} />
 
@@ -160,6 +160,7 @@ export default function ProjectDashboard() {
             <p className="text-[#6C757D]">Aquí puedes mostrar la información principal de tu proyecto.</p>
         </div> */}
                         <ContentCard content={contenido} setEdit={setEdit} setShowEventForm={setShowEventForm} />
+
                     </>
                 )}
 
