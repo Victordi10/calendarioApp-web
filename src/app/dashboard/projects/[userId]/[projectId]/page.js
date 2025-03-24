@@ -143,7 +143,7 @@ export default function ProjectDashboard() {
 
     const Main = () => {
         return (
-            <main className="flex-1 p-4 pb-6 mb-4  bg-[#F8F9FA] overflow-y-auto relative">
+            <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
 
                 <Error error={error} />
 
@@ -181,7 +181,7 @@ export default function ProjectDashboard() {
     return (
         <div className="flex h-screen bg-[#F8F9FA]">
             {/* Sidebar para pantallas grandes (md y superiores) */}
-            <Aside menuItems={menuItems} />
+            <Aside menuItems={menuItems} setMobileMenuOpen={setMobileMenuOpen} />
 
             {/* Contenido principal */}
             <div className="flex-1 flex flex-col">

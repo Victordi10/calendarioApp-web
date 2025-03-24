@@ -285,7 +285,7 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
               <div className="p-1 rounded-md" style={{ backgroundColor: `${categoryColor.secondary}` }}>
                 <TypeIcon className="w-3.5 h-3.5" style={{ color: categoryColor.primary }} />
               </div>
-              <span className="text-sm text-slate-500">Ciclo</span>
+              <span className="text-sm text-slate-500">Tipo</span>
             </div>
             <p className="text-sm font-medium text-slate-700 capitalize">{content.type}</p>
           </div>
