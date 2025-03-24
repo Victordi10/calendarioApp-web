@@ -24,7 +24,7 @@ export default function ProjectDashboard() {
     const [contenido, setContenido] = useState(null);
     const [project, setProject] = useState(null);
     const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]); // Fecha actual en formato YYYY-MM-DD
-    const [screen, setScreen] = useState("main");
+    const [screen, setScreen] = useState("home");
 
     // Estado para controlar la visualización del menú móvil
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -93,7 +93,7 @@ export default function ProjectDashboard() {
             console.log(data.data)
 
             setContenido(data.data.events[0]);
-            setProject(data.data.project[0]);
+            setProject(data.data.project);
         } catch (error) {
             console.error("Error al obtener el evento", error);
             setError(error.message || "Ocurrió un error al obtener el evento");
@@ -106,7 +106,7 @@ export default function ProjectDashboard() {
     // Lista de opciones del menú
     // Generamos dinámicamente el botón de calendario según la pantalla actual
     const calendarItem = screen === "calendario"
-        ? { icon: <FiHome className="mr-3 text-primary" />, label: "Volver al Inicio", onClick: () => setScreen("main") }
+        ? { icon: <FiHome className="mr-3 text-primary" />, label: "Volver al Inicio", onClick: () => setScreen("home") }
         : { icon: <FiCalendar className="mr-3 text-primary" />, label: "Calendario", onClick: () => setScreen("calendario") };
 
     // Definimos los items del menú y reemplazamos el de calendario con el dinámico
@@ -141,7 +141,7 @@ export default function ProjectDashboard() {
         setEdit(null)
     }
 
-    const Main = () => {
+    const Home = () => {
         return (
             <main className="flex-1 p-4 bg-[#F8F9FA] overflow-y-auto relative">
 
@@ -181,16 +181,15 @@ export default function ProjectDashboard() {
     return (
         <div className="flex h-screen bg-[#F8F9FA]">
             {/* Sidebar para pantallas grandes (md y superiores) */}
-            <Aside menuItems={menuItems} setMobileMenuOpen={setMobileMenuOpen} />
+            <Aside menuItems={menuItems}  setMobileMenuOpen={setMobileMenuOpen} />
 
             {/* Contenido principal */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col pb-6">
                 {/* Header con botón de menú para móviles */}
                 <Header menuItems={menuItems} mobileMenuOpen={mobileMenuOpen} userId={userId} setMobileMenuOpen={setMobileMenuOpen} project={project} />
-                {/* Contenido principal */}
 
                 {/* Renderizado condicional según la pantalla seleccionada */}
-                {screen === "main" ? <Main /> : <Calendario userId={userId} setEdit={setEdit} projectId={projectId} setError={setError} setShowEventForm={setShowEventForm} />}
+                {screen === "home" ? <Home /> : <Calendario userId={userId} setEdit={setEdit} projectId={projectId} setError={setError} setShowEventForm={setShowEventForm} />}
 
                 {/* Modal de formulario para agregar evento */}
                 {showEventForm && (

@@ -219,7 +219,7 @@ export default function ContentCard({ content, setEdit, setShowEventForm }) {
   const formattedTime = formatDateTime(content.time)
 
   return (
-    <Card className="w-full max-w-4xl mx-auto overflow-hidden border-0 bg-white shadow-sm rounded-xl transition-all duration-300 hover:shadow-md">
+    <Card className="w-full max-w-2xl sm:mx-auto overflow-hidden border-0 bg-white shadow-sm rounded-xl transition-all duration-300 hover:shadow-md">
       {/* Header con título y estado */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 border-b border-slate-100">
         <div className="flex items-start gap-3 mb-3 sm:mb-0">

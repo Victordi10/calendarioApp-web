@@ -23,7 +23,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+      <body className={` bg-fondo h-full text-text ${inter.variable} ${spaceGrotesk.variable} antialiased`}>
         {children}
       </body>
     </html>

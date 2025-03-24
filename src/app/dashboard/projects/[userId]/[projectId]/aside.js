@@ -10,7 +10,7 @@ export default function Aside({ menuItems, setMobileMenuOpen }) {
     return (
         <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E5E7EB]">
             <div className="p-4 border-b border-[#E5E7EB]">
-                <h2 className="text-xl font-semibold text-[#212529]">Proyecto</h2>
+                <h2 className="text-xl font-semibold text-[#212529]">VyCalendar</h2>
             </div>
 
             <nav className="flex-1 overflow-y-auto py-4">
